@@ -31,3 +31,6 @@ jobs:
 
       - name: 'Deploy'
         run: gcloud builds submit --tag europe-central2-docker.pkg.dev/learn-cicd-starter/notely-ar-repo/notely:latest
+
+      - name: 'Deploy to Cloud Run'
+        run: gcloud run deploy notely --image europe-central2-docker.pkg.dev/learn-cicd-starter/notely-ar-repo/notely:latest --region europe-west3 --allow-unauthenticated --project learn-cicd-starter --max-instances=4
