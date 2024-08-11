@@ -9,6 +9,9 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
 
+    env:
+      DATABSE_URL: ${{ secrets.DATABASE_URL }}
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -29,8 +32,14 @@ jobs:
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
 
-      - name: 'Deploy'
+      - name: 'Deploy to Artifact Registry'
         run: gcloud builds submit --tag europe-central2-docker.pkg.dev/learn-cicd-starter/notely-ar-repo/notely:latest
+
+      - name: 'Install goose'
+        run: go install github.com/pressly/goose/v3/cmd/goose@latest
+
+      - name: 'Run migrations'
+        run: ./scripts/migrateup.sh
 
       - name: 'Deploy to Cloud Run'
         run: gcloud run deploy notely --image europe-central2-docker.pkg.dev/learn-cicd-starter/notely-ar-repo/notely:latest --region europe-west3 --allow-unauthenticated --project learn-cicd-starter --max-instances=4
