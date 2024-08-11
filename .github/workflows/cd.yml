@@ -9,9 +9,6 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
 
-    env:
-      DATABSE_URL: ${{ secrets.DATABASE_URL }}
-
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -40,9 +37,13 @@ jobs:
 
       - name: 'Print db URL'
         run: echo $DATABASE_URL
+        env:
+          DATABSE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: 'Run migrations'
         run: ./scripts/migrateup.sh
+        env:
+          DATABSE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: 'Deploy to Cloud Run'
         run: gcloud run deploy notely --image europe-central2-docker.pkg.dev/learn-cicd-starter/notely-ar-repo/notely:latest --region europe-west3 --allow-unauthenticated --project learn-cicd-starter --max-instances=4
