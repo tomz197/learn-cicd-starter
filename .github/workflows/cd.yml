@@ -35,10 +35,14 @@ jobs:
       - name: 'Deploy to Artifact Registry'
         run: gcloud builds submit --tag europe-central2-docker.pkg.dev/learn-cicd-starter/notely-ar-repo/notely:latest
 
-      - name: 'Migrate Database'
-        run: |
-          go install github.com/pressly/goose/v3/cmd/goose@latest
-          ./scripts/migrateup.sh
+      - name: 'Install goose'
+        run: go install github.com/pressly/goose/v3/cmd/goose@latest
+
+      - name: 'Print db URL'
+        run: echo $DATABASE_URL
+
+      - name: 'Run migrations'
+        run: ./scripts/migrateup.sh
 
       - name: 'Deploy to Cloud Run'
         run: gcloud run deploy notely --image europe-central2-docker.pkg.dev/learn-cicd-starter/notely-ar-repo/notely:latest --region europe-west3 --allow-unauthenticated --project learn-cicd-starter --max-instances=4
